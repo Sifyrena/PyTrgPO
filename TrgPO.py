@@ -311,19 +311,26 @@ class Billiard:
         print(f"Initial Th: {self.Th}")
 
     
-    def Evolve(self, Log = True):
+    def Evolve(self, Log = True, NumTol = 1e-6):
         
         Periodic = False
         
         self.Glance()
         
         c = self.c
+
+
+        
         
         if Log:
             TLog = np.zeros([self.Iter,2])
             PtLog = np.zeros([self.Iter,2])
+
         
         Edge = self.CurrentEdge
+        Word = str(Edge)
+        
+        
         Pos = self.TranslateLocation()  
         
         Th = self.Th
@@ -331,6 +338,8 @@ class Billiard:
                 
         Angle = self.GlobalAngle(Edge, Th)
         
+        cInt = c
+        ThInt = Th
         
         if Th == ThCrit or Th == 0:
                 
@@ -387,7 +396,7 @@ class Billiard:
             c = cNext
             Th = ThNext     
             Edge = self.CurrentEdge
-            
+            Word += Edge
             Angle = self.GlobalAngle(Edge, Th)
             
                 
@@ -403,35 +412,26 @@ class Billiard:
                 
                 EdgeNext = self.Triangle.Edges[int(floor(c)) - 1]
                                 
-
+            if Periodic:
+                
+                print(f'We found Periodic Orbit Within Numerical Limits. \nPeriod is {ii}.')
+                
+                return TLog[0:ii,:], PtLog[0:ii,::], Periodic
+        
+            Deviation = np.sqrt((c-cInt)**2 + (Th-ThInt)**2)
             
+            if Deviation <= NumTol:
+                Periodic = True
+                print(f'With period word {Word}')
+
+
+        print(f'Wihin {self.Iter} attempts, we did not find a Periodic Orbit.')
         if Log:
-            return TLog,PtLog
-
-M = Triangle(pi/3,pi/3)
-x = Billiard(1.5146,0.6*pi, M, Iter = 5000)
-
-TLog,PtLog = x.Evolve()
+            return TLog,PtLog, Periodic
 
 
 
-# Public Methods Cont'd
 
-
-M.Plot()
-plt.plot(PtLog[:,0],PtLog[:,1])
-            
-
-Fig2 = plt.figure()
-
-ax2 = Fig2.add_subplot()
-
-ax2.scatter(TLog[:,0],TLog[:,1],color = 'black',s = 0.7)
-ax2.scatter(TLog[0,0],TLog[0,1],color = 'red')
-
-ax2.set_xlim([0,3])
-ax2.set_ylim([0,pi])
-
-ax2.hlines(pi/2,0,3,linestyles ='dashed')
+######################################## Let's Roll!
 
         
