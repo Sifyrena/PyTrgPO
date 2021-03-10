@@ -88,6 +88,7 @@ class Triangle:
         ax.set_aspect('equal')
         ax.grid()
 
+        return fig, ax
 ################ BUTTER ################
 
 
@@ -423,9 +424,17 @@ class Billiard:
             if Deviation <= NumTol:
                 Periodic = True
                 print(f'With period word {Word}')
-
+                
+                self.Word = Word
+                self.Periodic = True
+                self.Period = ii + 1
 
         print(f'Wihin {self.Iter} attempts, we did not find a Periodic Orbit.')
+        
+        self.Word = ''
+        self.Periodic = False
+        self.Period = np.nan
+        
         if Log:
             return TLog,PtLog, Periodic
 

@@ -21,7 +21,7 @@ NumTol = 1e-6
 ##### 
 M = Triangle(pi/4,pi/4)
 
-x = Billiard(1.5,1, M, Iter = 500)
+x = Billiard(1.5,1, M, Iter = 50)
 
 
 TLog,PtLog,Periodic = x.Evolve()
